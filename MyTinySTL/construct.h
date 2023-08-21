@@ -29,8 +29,6 @@ void construct(Ty1* ptr, const Ty2& value){
 template <class Ty, class... Args>
 void construct(Ty* ptr, Args&&... args){
     ::new ((void*)ptr) Ty(mystl::forward<Args>(args)...);
-    // 根据引用折叠原理，将forward使用在右值引用函数参数上，转发保持被转发实参的所有性质（是否是const，是左值还是右值）
-        // 右值引用函数参数接受实参（右值）后可能改变其性质（变成左值），因为函数参数的传递是左值表达式，左值和右值之间可能无法传递，需要用forward加上&&保持性质
 }
 
 // 析构对象，区分是否平凡析构和范围析构
