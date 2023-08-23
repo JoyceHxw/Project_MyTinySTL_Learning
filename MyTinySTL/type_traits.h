@@ -1,7 +1,7 @@
 #ifndef MYTINYSTL_TYPE_TRAITS_H_
 #define MYTINYSTL_TYPE_TRAITS_H_
 
-// 引入标准库的type_traits，用于操作类型
+// 借助标准库的type_traits，萃取类的信息
 #include <type_traits>
 
 namespace mystl

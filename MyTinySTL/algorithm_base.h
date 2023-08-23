@@ -1,3 +1,6 @@
+#ifndef MYTINYSTL_ALGOBASE_H_
+#define MYTINYSTL_ALGOBASE_H_
+
 #include <cstring>
 #include "util.h"
 #include "iterator.h"
@@ -49,7 +52,7 @@ void iter_swap(FIter1 lhs, FIter2 rhs){
 }
 
 // 4.copy：把被拷贝容器[first,last)区间内的元素拷贝到指定容器中
-// input_iterator_tag
+// 针对input_iterator_tag的重载
 template <class InputIter, class OutputIter>
 OutputIter unchecked_copy_cat(InputIter first, InputIter last, OutputIter result, mystl::input_iterator_tag){
     for(;first!=last; first++,result++){
@@ -57,15 +60,16 @@ OutputIter unchecked_copy_cat(InputIter first, InputIter last, OutputIter result
     }
     return result;
 }
-// random_access_iterator_tag
+// 针对random_access_iterator_tag的重载
 template <class RandomIter, class OutputIter>
 OutputIter unchecked_copy_cat(RandomIter first, RandomIter last, OutputIter result, mystl::random_access_iterator_tag){
+    // 速度快于input_iterator_tag的拷贝
     for(auto n=last-first; n>0; n--,first++,result++){
         *result=*first;
     }
     return result;
 }
-// 根据迭代器类型调用对应函数
+// 根据迭代器类型调用对应函数，复制迭代器位置上的值
 template <class InputIter, class OutputIter>
 OutputIter unchecked_copy(InputIter first, InputIter last, OutputIter result){
     return unchecked_copy_cat(first,last,result,iterator_category(first));
@@ -79,17 +83,17 @@ template <class Tp,class Up>
 typename std::enable_if<
 std::is_same<typename std::remove_const<Tp>::type, Up>::value && 
 std::is_trivially_copy_assignable<Up>::value,Up*
->::type 
-unchecked_copy(Tp* first,Tp* last, Up* result){
-    // std::enable_if 是一个模板元函数，用于在编译时根据条件来选择不同的函数实现。
-    // 在这里，我们检查 Tp 是否去除了 const 修饰后和 Up 是否相同，以及 Up 是否可以进行平凡的拷贝赋值（即是否支持 std::is_trivially_copy_assignable）。
-    // 如果满足这些条件，则该函数被启用，否则该函数被禁用，从而在编译期进行了类型检查。
+>::type unchecked_copy(Tp* first,Tp* last, Up* result){
+    // std::enable_if 是一个模板元函数，在编译时条件为真则返回第二个类型参数
+    // 在这里，我们检查 Tp 是否去除了 const 修饰后和 Up 是否相同，以及 Up 是否可以进行平凡的拷贝赋值
+    // 如果满足，则调用memmove函数，将一块内存从一个位置复制到另一个位置，速度最快
     const auto n=static_cast<size_t>(last-first);
     if(n!=0){
         std::memmove(result,first,n*sizeof(Up));
     }
     return result+n;
 }
+
 template <class InputIter, class OutputIter>
 OutputIter copy(InputIter first, InputIter last, OutputIter result){
     return unchecked_copy(first,last,result);
@@ -97,4 +101,4 @@ OutputIter copy(InputIter first, InputIter last, OutputIter result){
 
 } // namespace mystl
 
-
+#endif
