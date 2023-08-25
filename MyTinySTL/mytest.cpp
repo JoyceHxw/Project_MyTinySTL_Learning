@@ -3,7 +3,6 @@
 #include <vector>
 #include "util.h"
 
-
 void test_min(){
     std::cout<<__func__<<"-----------------"<<std::endl;
     int a=0;
@@ -69,17 +68,28 @@ void test_pair(){
     std::cout<<p6.first<<" "<<p6.second<<std::endl;
 }
 
+void test_copy_backward(){
+    std::vector<int> v1={1,2,3,4,5,6,7,8,9};
+    mystl::copy_backward(v1.begin(), v1.begin()+3, v1.end());
+    for(int i=0; i<v1.size(); i++){
+        std::cout<<v1[i]<<" ";
+    }
+    std::cout<<std::endl;
+}
+
 int main(){
 
     #ifdef max
     #pragma message("#undefing marco max")
     #undef max
     #endif // max
+
     test_min();
     test_iter_swap();
     test_swap_range();
     test_copy();
     test_pair();
+    test_copy_backward();
     
     return 0;
-} // namespace mystl
+}
